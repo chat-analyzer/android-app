@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="test.gm.android.google.com.chatanalyzer">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -15,29 +17,40 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-                <intent-filter>
-                    <action android:name="android.intent.action.SENDTO"/>
-                    <data android:scheme="mailto"/>
-                    <category android:name="android.intent.category.DEFAULT"/>
-                </intent-filter>
-                <intent-filter>
-                    <action android:name="android.intent.action.SEND"/>
-                    <data android:mimeType="*/*"/>
-                    <category android:name="android.intent.category.DEFAULT"/>
-                </intent-filter>
-                <intent-filter>
-                    <action android:name="android.intent.action.SEND_MULTIPLE"/>
-                    <data android:mimeType="*/*"/>
-                    <category android:name="android.intent.category.DEFAULT"/>
-                </intent-filter>
-                <intent-filter>
-                    <action android:name="android.intent.action.VIEW"/>
-                    <data android:scheme="mailto"/>
+            <intent-filter>
+                <action android:name="android.intent.action.SENDTO" />
 
-                    <category android:name="android.intent.category.DEFAULT"/>
-                    <category android:name="android.intent.category.BROWSABLE"/>
-                </intent-filter>
+                <data android:scheme="mailto" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <data android:mimeType="*/*" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+
+                <data android:mimeType="*/*" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <data android:scheme="mailto" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
         </activity>
+        <activity
+            android:name=".WebViewActivity"
+            android:label="@string/title_activity_web_view"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

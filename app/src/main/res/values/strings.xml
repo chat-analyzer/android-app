@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ChatAnalyzer</string>
+    <string name="title_activity_web_view">WebViewActivity</string>
 </resources>
