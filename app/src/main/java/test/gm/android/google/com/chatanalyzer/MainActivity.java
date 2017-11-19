@@ -4,31 +4,33 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.TextUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -70,102 +72,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onPause() {
+        pgb.setVisibility(ProgressBar.INVISIBLE);
+        super.onPause();
+    }
+
+    @Override
     public void onClick(View view) {
         pgb.setVisibility(ProgressBar.VISIBLE);
 
-        SendChatsAsync async = new SendChatsAsync();
 
         String fullChat = "";
         StringBuffer buf = new StringBuffer();
 
-        // convert URI file to String
 
+        final String webviewTarget;
+        webviewTarget = "";
+
+        // prepare reading of chat file
         try {
             InputStream is = getContentResolver().openInputStream(fileUri);
-            BufferedReader r = new BufferedReader(new InputStreamReader(is));
-            if(is != null) {
-                while((fullChat = r.readLine()) != null) {
-                    buf.append(fullChat+"\n");
+
+            RequestParams rp = new RequestParams();
+            rp.put("chat", is, "chat.txt");
+            AsyncHttpClient client = new AsyncHttpClient();
+
+            client.post("http://chat-analyzer-server.azurewebsites.net/registerChat", rp, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    String webviewTarget = new String(responseBody);
+
+                    Intent i = new Intent(getApplicationContext(), WebViewActivity.class);
+                    i.putExtra("URL", webviewTarget);
+                    startActivity(i);
+                    Log.d(TAG, statusCode + " - " + webviewTarget);
                 }
-            }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    Log.d(TAG, "" + statusCode);
+                }
+            });
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
-        fullChat = buf.toString();
-
-        //Log.d(TAG, fullChat);
-        //Log.d(TAG, URLEncoder.encode(fullChat));
-
-        Log.d(TAG, "async " + async.execute(fullChat));
-    }
-
-    private class SendChatsAsync extends AsyncTask<String, Void, String> {
-
-        String response = "";
-
-        /**
-         *
-         * @param input
-         * @return
-         */
-        @Override
-        protected String doInBackground(String... input) {
-            try {
-
-
-                URL url = new URL("http://chat-analyzer-server.azurewebsites.net/api");
-                ContentValues val = new ContentValues();
-
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod("POST");
-                con.setDoOutput(true);
-                con.setDoInput(true);
-
-
-
-                String reqBody = "action=registerChat&chat=" + URLEncoder.encode(input[0]);
-
-                DataOutputStream s = new DataOutputStream(con.getOutputStream());
-                s.writeBytes(reqBody);
-                s.flush();
-                s.close();
-
-                con.connect();
-
-                int responseCode = con.getResponseCode();
-                if(responseCode >= 200 && responseCode < 300) { // 2XX: success
-                    BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                    String inputLine;
-
-                    StringBuffer buf = new StringBuffer();
-
-                    while((inputLine = in.readLine()) != null) {
-                        buf.append(inputLine);
-                    }
-                    response = buf.toString();
-                    Log.d(TAG, response);
-                }
-                Log.d(TAG, "POST: " + responseCode);
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            Intent i = new Intent(getApplicationContext(), WebViewActivity.class);
-            i.putExtra("URL", response);
-            startActivity(i);
-        }
     }
 }
