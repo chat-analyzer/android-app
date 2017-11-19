@@ -30,6 +30,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="GO"
+        android:textSize="18pt"
+        android:paddingHorizontal="90px"
+        android:paddingVertical="45px"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,11 +65,10 @@
         android:layout_marginBottom="32dp"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
-        android:text="By submitting your chat log, you agree to have your messages uploaded to and analyzed by Microsoft's Azure cloud services.\nWe do not store your data any longer than needed for analysis."
+        android:text="By submitting your chat log, you agree to have your messages uploaded to and analyzed by Microsoft's Azure cloud services."
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
 </android.support.constraint.ConstraintLayout>

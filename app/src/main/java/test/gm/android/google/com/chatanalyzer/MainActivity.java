@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -57,6 +58,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d(TAG, String.valueOf(((ArrayList<Uri>) b.get(Intent.EXTRA_STREAM)).get(0)));
             Log.d(TAG, i.getExtras().keySet().toString());
             fileUri = ((ArrayList<Uri>) b.get(Intent.EXTRA_STREAM)).get(0);
+        } else {
+            btn.setFocusable(false);
+            //btn.setActivated(false);
+            btn.setEnabled(false);
+            TextView bottom = (TextView) findViewById(R.id.text_view_bottom);
+            bottom.setText("This app only works when opened via WhatsApp's \"send email\" feature.\nPlease open a chat in WhatsApp, choose menu, more, send chat via email!");
         }
 
 
